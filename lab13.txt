@@ -1,0 +1,44 @@
+1. There is a fault in the code. 
+for (int i = 1; i < attendance_records.size(); ++i)
+The loop starts at index 1, meaning attendance_records[0] is never examined.
+Since the array represents 10 lectures, indexed 0–9, skipping index 0 means one lecture’s attendance is never counted. 
+That's why, the program may incorrectly compute the number of absences.
+
+2. A fault is executed only when the faulty code is run.
+Here, the fault is the loop condition starting at index 1.
+This loop always executes for any vector of size ≥ 2.
+However, we need a test case that does not execute the faulty line of code.
+It is possible in if attendance_records.size() ≤ 1, the loop never executes.
+But the problem domain states that: “each student’s attendance is represented by an array of 10 values.”
+Thus, you cannot create a valid test in this domain that avoids executing the loop.
+
+3. We must execute the faulty loop, but internal state must remain correct.
+That means the skipped index (0) must NOT affect the final absent count.
+To avoid an error state, set: {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+All lectures present: true absent count = 0
+Faulty program skips index 0, but skipping a “present” value does not cause an incorrect internal state.
+Expected Output
+Correct program: false (not failing)
+Faulty program: false
+Error State?
+No — internal absent count is still correct (0).
+Thus the fault is executed but no error state occurs.
+
+4. {0, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+Correct Program
+True absences = 1: student does not fail: output false
+Faulty Program
+Skips index 0: absent_count = 0: output false
+Error State?
+Yes — internal absent count is wrong (should be 1, computed as 0).
+Failure?
+No — external output still matches expected (false).
+
+5. {0, 0, 0, 1, 1, 1, 1, 1, 1, 1}
+Correct Program
+True absences = 3: student fails: output true
+Faulty Program
+Skips index 0: counts only 2 absences: output false
+Result
+Error state: wrong absent count (2 instead of 3)
+Failure: output incorrect (false instead of true)
